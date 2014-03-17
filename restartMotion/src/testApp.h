@@ -22,6 +22,8 @@ public:
     
     int mouseOffSetX;
     int mouseOffSetY;
+    int rectWidth;
+    int rectHeight;
     
     ofxCv::ContourFinder contourFinder;
     float threshold;

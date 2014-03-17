@@ -16,11 +16,13 @@ void testApp::setup() {
     
     mouseOffSetX = 0;
     mouseOffSetY = ofGetHeight()*0.7;
+    rectWidth = 320;
+    rectHeight = 120;
 
     
 //    string imageNames[] = {"redb01.jpg", "redb02.jpg", "redb03.jpg", "redb04.jpg", "redb05.jpg", "redb06.jpg", "redb07.jpg", "redb08.jpg", "redb09.jpg", "redb10.jpg", "redb11.jpg", "redb12.jpg", "redb13.jpg", "redb14.jpg", "redb15.jpg", "redb16.jpg", "redb17.jpg", "redb18 copy.jpg", "redb19 copy.jpg", "redb20 copy.jpg", "redb21 copy.jpg", "redb22 copy.jpg", "redb23.jpg", "redb24.jpg", "redb25 copy.jpg", "redb26 copy.jpg", "redb27 copy.jpg", "redb28 copy.jpg", "redb29 copy.jpg", "redb30 copy.jpg", "redb31 copy.jpg", "redb32 copy.jpg", "red06.jpg", "red07.jpg", "red08.jpg", "red09.jpg", "red01.jpg", "red02.jpg", "red03.jpg", "red04.jpg", "red05.jpg"};
 
-    string imageNames[] = {"redb18 copy.jpg", "redb19 copy.jpg", "redb20 copy.jpg", "redb21 copy.jpg", "redb22 copy.jpg", "redb25 copy.jpg", "redb26 copy.jpg", "redb27 copy.jpg", "redb28 copy.jpg", "redb29 copy.jpg", "redb30 copy.jpg", "redb31 copy.jpg", "redb32 copy.jpg"};
+    string imageNames[] = {"red01_copy.jpg", "red02_copy.jpg", "red03_copy.jpg", "red04_copy.jpg", "red05_copy.jpg", "red06_copy.jpg", "red07_copy.jpg", "red08_copy.jpg", "red09_copy.jpg", "red10_copy.jpg", "redb01 copy.jpg", "redb02 copy.jpg", "redb03 copy.jpg", "redb04 copy.jpg", "redb05 copy.jpg", "redb06 copy.jpg", "redb07 copy.jpg", "redb08 copy.jpg", "redb09 copy.jpg", "redb10 copy.jpg", "redb11 copy.jpg", "redb12 copy.jpg", "redb13 copy.jpg", "redb14 copy.jpg", "redb15 copy.jpg", "redb16 copy.jpg", "redb17 copy.jpg", "redb18 copy.jpg", "redb19 copy.jpg", "redb20 copy.jpg", "redb21 copy.jpg", "redb22 copy.jpg", "redb25 copy.jpg", "redb26 copy.jpg", "redb27 copy.jpg", "redb28 copy.jpg", "redb29 copy.jpg", "redb30 copy.jpg", "redb31 copy.jpg", "redb32 copy.jpg"};
 
     int size = sizeof(imageNames)/sizeof(imageNames[0]);
     cout << "size of array: " << size << endl;
@@ -64,7 +66,6 @@ void testApp::update() {
     thresholdImage.update();
     
     }
-
 }
 
 void testApp::draw() {
@@ -75,7 +76,7 @@ void testApp::draw() {
         drawImages(currPathPoint);
     }
     
-    
+    // draw rect to visualize the currPathPoint
     ofPushMatrix();
     ofPushStyle();
     ofTranslate(mouseOffSetX, mouseOffSetY);
@@ -84,7 +85,6 @@ void testApp::draw() {
     ofRect(0, 0, 320, 240);
     ofPopStyle();
     ofPopMatrix();
-
 }
 
 ObjectData testApp:: closestImageToPoint(ofVec2f pathPoint){
@@ -97,7 +97,6 @@ ObjectData testApp:: closestImageToPoint(ofVec2f pathPoint){
         if(d < minDist){
             minDist = d;
             closestImageIndex = i;
-         
         }
     }
     
@@ -105,7 +104,6 @@ ObjectData testApp:: closestImageToPoint(ofVec2f pathPoint){
 }
 
 void testApp::drawImages(ofVec2f currPathPoint){
-    
     
     ObjectData closestImage = closestImageToPoint(currPathPoint);
     
@@ -144,19 +142,19 @@ void testApp:: loadingImageObjectData(){
         contourW = contourFinder.getBoundingRects()[i].width;
         contourH = contourFinder.getBoundingRects()[i].height;
         contourR = contourW / contourH;
-        cout << "contourWidth i: " << contourW << endl;
-        cout << "contourHeight i: " << contourH << endl;
+//        cout << "contourWidth i: " << contourW << endl;
+//        cout << "contourHeight i: " << contourH << endl;
         
         // store the x, y, height and width of the contour into the image object
         imageObjects[currentImage].mCWidth = contourFinder.getBoundingRects()[i].width;
-        cout << "mCWidth: " << imageObjects[currentImage].mCWidth << endl;
+//        cout << "mCWidth: " << imageObjects[currentImage].mCWidth << endl;
         imageObjects[currentImage].mCHeight = contourFinder.getBoundingRects()[i].height;
-        cout << "mCHeight: " << imageObjects[currentImage].mCHeight << endl;
+//        cout << "mCHeight: " << imageObjects[currentImage].mCHeight << endl;
         
         imageObjects[currentImage].mCx = contourFinder.getBoundingRects()[i].x;
-        cout << "mCx: " << imageObjects[currentImage].mCx << endl;
+//        cout << "mCx: " << imageObjects[currentImage].mCx << endl;
         imageObjects[currentImage].mCy = contourFinder.getBoundingRects()[i].y;
-        cout << "mCy: " << imageObjects[currentImage].mCy << endl;
+//        cout << "mCy: " << imageObjects[currentImage].mCy << endl;
         
         
         // draw subsections with the contours
@@ -169,24 +167,21 @@ void testApp:: loadingImageObjectData(){
 
 void testApp::mousePressed(int x, int y, int button) {
     if (mode == 0) {
-        
         // set color by selecting pixel, but only if it's within the width/height of the image
         if(x > ofGetWidth()*0.3 && x < ofGetWidth()*0.3 + myImage.getWidth()
-           && y< myImage.getHeight())
-        {
+           && y< myImage.getHeight()){
             targetColor = myImage.getPixelsRef().getColor(x - ofGetWidth()*0.3, y);
             contourFinder.setTargetColor(targetColor, trackingColorMode);
         }
     }
     
     if (mode == 1){
-        // click to make path points
-        
-        currPathPoint = ofVec2f(x - mouseOffSetX, y - mouseOffSetY);
-        cout << "currentPathPoint: " << currPathPoint << endl;
-
+        if(x >= mouseOffSetX && x <= mouseOffSetX + rectWidth && y>= mouseOffSetY && y <= mouseOffSetY + rectHeight){
+            // click to make path points
+            currPathPoint = ofVec2f(x - mouseOffSetX, y - mouseOffSetY);
+            cout << "currentPathPoint: " << currPathPoint << endl;
+        }
     }
-    
 }
 
 void testApp::keyPressed(int key) {
