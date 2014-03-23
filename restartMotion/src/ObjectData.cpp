@@ -14,13 +14,13 @@ ObjectData::ObjectData( ofImage img, std::string imgName){
     mCWidth = -1;
     mCHeight = -1;
     mCx = -1;
-    mCy = -1 ;
+    mCy = -1;
+    center = ofVec2f(-1, -1);
  
 }
 
 float ObjectData:: measureDistance(ofVec2f pathPoint){
     return pathPoint.distance(ofVec2f(mCx, mCy));
-    
 }
 
 //void ObjectData::contours(){

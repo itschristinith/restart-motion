@@ -14,8 +14,11 @@ public:
 	void keyPressed(int key);
     void guiEvent(ofxUIEventArgs &e);
     void loadingImageObjectData();
+    void loadDataAuto();
     void drawImages(ofVec2f currPathPoint);
+    void drawImages(vector<ofVec2f> currentPath);
     ObjectData closestImageToPoint(ofVec2f pathPoint);
+    vector <ObjectData> closestImageToPoint(vector<ofVec2f> pathPoints);
     void exit();
 
 	ofxUICanvas * gui;
@@ -43,8 +46,11 @@ public:
     
     ObjectData oData;
     vector<ObjectData> imageObjects;
+    vector <ObjectData> imageObjectsSet;
     
     ofVec2f currPathPoint;
+    vector<ofVec2f> currPath;
+    
     int mode;
     float contourW;
     float contourH;

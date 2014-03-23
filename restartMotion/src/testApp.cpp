@@ -17,12 +17,9 @@ void testApp::setup() {
     mouseOffSetX = 0;
     mouseOffSetY = ofGetHeight()*0.7;
     rectWidth = 320;
-    rectHeight = 120;
+    rectHeight = 240;
 
-    
-//    string imageNames[] = {"redb01.jpg", "redb02.jpg", "redb03.jpg", "redb04.jpg", "redb05.jpg", "redb06.jpg", "redb07.jpg", "redb08.jpg", "redb09.jpg", "redb10.jpg", "redb11.jpg", "redb12.jpg", "redb13.jpg", "redb14.jpg", "redb15.jpg", "redb16.jpg", "redb17.jpg", "redb18 copy.jpg", "redb19 copy.jpg", "redb20 copy.jpg", "redb21 copy.jpg", "redb22 copy.jpg", "redb23.jpg", "redb24.jpg", "redb25 copy.jpg", "redb26 copy.jpg", "redb27 copy.jpg", "redb28 copy.jpg", "redb29 copy.jpg", "redb30 copy.jpg", "redb31 copy.jpg", "redb32 copy.jpg", "red06.jpg", "red07.jpg", "red08.jpg", "red09.jpg", "red01.jpg", "red02.jpg", "red03.jpg", "red04.jpg", "red05.jpg"};
-
-    string imageNames[] = {"red01_copy.jpg", "red02_copy.jpg", "red03_copy.jpg", "red04_copy.jpg", "red05_copy.jpg", "red06_copy.jpg", "red07_copy.jpg", "red08_copy.jpg", "red09_copy.jpg", "red10_copy.jpg", "redb01 copy.jpg", "redb02 copy.jpg", "redb03 copy.jpg", "redb04 copy.jpg", "redb05 copy.jpg", "redb06 copy.jpg", "redb07 copy.jpg", "redb08 copy.jpg", "redb09 copy.jpg", "redb10 copy.jpg", "redb11 copy.jpg", "redb12 copy.jpg", "redb13 copy.jpg", "redb14 copy.jpg", "redb15 copy.jpg", "redb16 copy.jpg", "redb17 copy.jpg", "redb18 copy.jpg", "redb19 copy.jpg", "redb20 copy.jpg", "redb21 copy.jpg", "redb22 copy.jpg", "redb25 copy.jpg", "redb26 copy.jpg", "redb27 copy.jpg", "redb28 copy.jpg", "redb29 copy.jpg", "redb30 copy.jpg", "redb31 copy.jpg", "redb32 copy.jpg"};
+    string imageNames[] = {"red01_copy.jpg", "red02_copy.jpg", "red03_copy.jpg", "red04_copy.jpg", "red05_copy.jpg", "red06_copy.jpg", "red07_copy.jpg", "red08_copy.jpg", "red09_copy.jpg", "red10_copy.jpg", "redb01 copy.jpg", "redb02 copy.jpg", "redb03 copy.jpg", "redb04 copy.jpg", "redb05 copy.jpg", "redb06 copy.jpg", "redb07 copy.jpg", "redb08 copy.jpg", "redb09 copy.jpg", "redb10 copy.jpg", "redb11 copy.jpg", "redb12 copy.jpg", "redb13 copy.jpg", "redb14 copy.jpg", "redb15 copy.jpg", "redb16 copy.jpg", "redb17 copy.jpg", "redb18 copy.jpg", "redb19 copy.jpg", "redb20 copy.jpg", "redb21 copy.jpg", "redb22 copy.jpg", "redb25 copy.jpg", "redb26 copy.jpg", "redb27 copy.jpg", "redb28 copy.jpg", "redb29 copy.jpg", "redb30 copy.jpg", "redb31 copy.jpg", "redb32 copy.jpg", "01 copy.jpg", "02 copy.jpg", "03 copy.jpg", "04 copy.jpg", "05 copy.jpg", "06 copy.jpg", "07 copy.jpg", "08 copy.jpg", "09 copy.jpg", "10 copy.jpg", "11 copy.jpg", "12 copy.jpg", "13 copy.jpg", "14 copy.jpg", "15 copy.jpg", "16 copy.jpg", "17 copy.jpg", "18 copy.jpg", "19 copy.jpg", "20 copy.jpg", "21 copy.jpg", "22 copy.jpg", "23 copy.jpg", "24 copy.jpg", "25 copy.jpg", "26 copy.jpg", "27 copy.jpg", "28 copy.jpg", "29 copy.jpg", "30 copy.jpg", "31 copy.jpg", "32 copy.jpg", "33 copy.jpg", "34 copy.jpg", "35 copy.jpg", "36 copy.jpg", "37 copy.jpg", "38 copy.jpg", "39 copy.jpg", "40 copy.jpg", "41 copy.jpg", "42 copy.jpg", "43 copy.jpg", "44 copy.jpg", "45 copy.jpg", "46 copy.jpg", "47 copy.jpg", "48 copy.jpg", "49 copy.jpg", "50 copy.jpg", "51 copy.jpg", "52 copy.jpg", "53 copy.jpg", "54 copy.jpg", "60 copy.jpg", "61 copy.jpg", "62 copy.jpg", "63 copy.jpg", "64 copy.jpg", "65 copy.jpg", "66 copy.jpg", "67 copy.jpg", "68 copy.jpg", "69 copy.jpg", "70 copy.jpg", "71 copy.jpg", "72 copy.jpg", "73 copy.jpg", "74 copy.jpg", "75 copy.jpg", "76 copy.jpg", "77 copy.jpg", "78 copy.jpg", "79 copy.jpg", "80 copy.jpg", "81 copy.jpg", "82 copy.jpg", "83 copy.jpg", "84 copy.jpg"};
 
     int size = sizeof(imageNames)/sizeof(imageNames[0]);
     cout << "size of array: " << size << endl;
@@ -38,6 +35,7 @@ void testApp::setup() {
         oData = ObjectData( mImages[i], imageNames[i]);
         imageObjects.push_back(oData);
     }
+    
     cout << "size of imageObjects: " << imageObjects.size() << endl;
     gui = new ofxUICanvas(0 , 0, ofGetWidth() *0.3, ofGetHeight() * 0.2);
     gui->addSlider("CONT THRESHOLD", 0, 255, &threshold);
@@ -72,8 +70,14 @@ void testApp::draw() {
     if(mode == 0){
         loadingImageObjectData();
     }
-    else if(mode == 1){
+
+    else if(mode == 2 && currPath.size() >= 3){
         drawImages(currPathPoint);
+//        drawImages(currPath);
+    }
+    
+    else {
+//        loadDataAuto();
     }
     
     // draw rect to visualize the currPathPoint
@@ -104,15 +108,14 @@ ObjectData testApp:: closestImageToPoint(ofVec2f pathPoint){
 }
 
 void testApp::drawImages(ofVec2f currPathPoint){
-    
+    // to search one point at a time
     ObjectData closestImage = closestImageToPoint(currPathPoint);
-    
     ofPushMatrix();
     ofTranslate((ofGetWidth()*0.5 - myImage.getWidth()), mouseOffSetY);
     closestImage.mImg.draw(0, 0, closestImage.mImg.getWidth(), closestImage.mImg.getHeight());
     ofPopMatrix();
-
 }
+
 
 void testApp:: loadingImageObjectData(){
     //translate to 0.3 of the width, draw the image
@@ -137,13 +140,11 @@ void testApp:: loadingImageObjectData(){
     ofPopStyle();
     ofPopMatrix();
     
-    // draw the subsections of the image from the contour bounding boxes below the original image
+    // go through the contours and get W, H, Ratio of the image you are on
     for (int i = 0;  i<contourFinder.getBoundingRects().size(); i ++) {
         contourW = contourFinder.getBoundingRects()[i].width;
         contourH = contourFinder.getBoundingRects()[i].height;
         contourR = contourW / contourH;
-//        cout << "contourWidth i: " << contourW << endl;
-//        cout << "contourHeight i: " << contourH << endl;
         
         // store the x, y, height and width of the contour into the image object
         imageObjects[currentImage].mCWidth = contourFinder.getBoundingRects()[i].width;
@@ -176,10 +177,23 @@ void testApp::mousePressed(int x, int y, int button) {
     }
     
     if (mode == 1){
+        if(x > ofGetWidth()*0.3 && x < ofGetWidth()*0.3 + myImage.getWidth()
+           && y< myImage.getHeight()){
+            targetColor = myImage.getPixelsRef().getColor(x - ofGetWidth()*0.3, y);
+            contourFinder.setTargetColor(targetColor, trackingColorMode);
+        }
+    }
+    
+    if (mode == 2){
+        // if mouse is in the rect
         if(x >= mouseOffSetX && x <= mouseOffSetX + rectWidth && y>= mouseOffSetY && y <= mouseOffSetY + rectHeight){
             // click to make path points
             currPathPoint = ofVec2f(x - mouseOffSetX, y - mouseOffSetY);
             cout << "currentPathPoint: " << currPathPoint << endl;
+            
+            
+            currPath.push_back( currPathPoint );
+            cout << "currPath: " << currPath.size() << endl;
         }
     }
 }
@@ -190,6 +204,9 @@ void testApp::keyPressed(int key) {
 	}
     if(key == '1') {
 		mode = 1;
+	}
+    if(key == '2') {
+		mode = 2;
 	}
 	if(key == 'h') {
 		trackingColorMode = TRACK_COLOR_H;
@@ -219,6 +236,61 @@ void testApp::keyPressed(int key) {
 
 //contourFinder.setTargetColor(targetColor, trackingColorMode);
 }
+
+////------------------- this is to load many points at once, need to finish ----------------------
+//vector <ObjectData> testApp:: closestImageToPoint(vector<ofVec2f> pathPoints){
+//    float minDist = 10000;
+//    int closestImageIndex = 0;
+//    vector <ObjectData> imageObjectsSet;
+//
+//    for (int j=0; j<pathPoints.size(); j++){
+//    for (int i =0; i<imageObjects.size(); i++) {
+//        float d = imageObjects[i].measureDistance(pathPoints[j]);
+//
+//        if(d < minDist){
+//            minDist = d;
+//            closestImageIndex = i;
+//            imageObjectsSet.push_back(imageObjects[closestImageIndex]);
+//            cout <<"imageObejctsSet: " << imageObjectsSet.size() << endl;
+//        }
+//    }
+//}
+//    return imageObjectsSet;
+//}
+
+//void testApp::drawImages(vector <ofVec2f> currentPath){
+//    // to search vector of points and get vector of ObjectData
+//    vector <ObjectData> closestImages = closestImageToPoint(currentPath);
+//    cout << "closestImages: " << closestImages.size() << endl;
+////    for (int i = 0; i < closestImages.size(); i++){
+////        cout << "currPath: " << currPath.size() << endl;
+////        ofPushMatrix();
+////        ofTranslate((ofGetWidth()*0.5 - myImage.getWidth()), mouseOffSetY);
+////        closestImages[i].mImg.draw(0, closestImages[i].mImg.getWidth(), closestImages[i].mImg.getWidth(), closestImages[i].mImg.getHeight());
+////        ofPopMatrix();
+//
+////    }
+//}
+
+////---------------this is to load the data automatically. need to finish this.-------------------
+//void testApp:: loadDataAuto(){
+//
+//    for (int i=0; i<imageObjects.size(); i++){
+//            // store the x, y, height and width of the contour into the image object
+//            imageObjects[i].mCWidth = contourFinder.getBoundingRects()[0].width;
+//            //        cout << "mCWidth: " << imageObjects[currentImage].mCWidth << endl;
+//            imageObjects[i].mCHeight = contourFinder.getBoundingRects()[0].height;
+//            //        cout << "mCHeight: " << imageObjects[currentImage].mCHeight << endl;
+//
+//            imageObjects[i].mCx = contourFinder.getBoundingRects()[0].x;
+//            //        cout << "mCx: " << imageObjects[currentImage].mCx << endl;
+//            imageObjects[i].mCy = contourFinder.getBoundingRects()[0].y;
+//            //        cout << "mCy: " << imageObjects[currentImage].mCy << endl;
+//
+//        }
+//    }
+//
+
 
 void testApp::guiEvent(ofxUIEventArgs &e)
 {
@@ -261,6 +333,7 @@ void testApp::guiEvent(ofxUIEventArgs &e)
 //        cout << "value: " << rotslider->getScaledValue() << endl;
 //    }
 }
+
 //--------------------------------------------------------------
 void testApp::exit()
 {

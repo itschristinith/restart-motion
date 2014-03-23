@@ -27,6 +27,7 @@ public:
     float mCHeight;
     int mCx;
     int mCy;
+    ofVec2f center;
     
     
 
