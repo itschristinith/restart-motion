@@ -267,20 +267,22 @@ vector <ObjectData> testApp:: closestImageToPoint(vector<ofVec2f> pathPoints){
     vector <ObjectData> imageObjectsSet;
 
     for (int j=0; j<pathPoints.size(); j++){
+        cout <<"closestImageIndex: " << closestImageIndex << endl;
         cout << "pathPoints: " << pathPoints.size() << endl;
-    for (int i =0; i<imageObjects.size(); i++) {
-        float d = imageObjects[i].measureDistance(pathPoints[j]);
+        for (int i =0; i<imageObjects.size(); i++) {
+            float d = imageObjects[i].measureDistance(pathPoints[j]);
 
-        if(d < minDist){
-            minDist = d;
-            closestImageIndex = i;
+            if(d < minDist){
+                minDist = d;
+                closestImageIndex = i;
+            }
         }
-            minDist =1000;
-    }
+        minDist =1000;
         imageObjectsSet.push_back(imageObjects[closestImageIndex]);
         cout <<"imageObejctsSet: " << imageObjectsSet.size() << endl;
 
-}
+    }
+    
     return imageObjectsSet;
 }
 
@@ -289,11 +291,11 @@ void testApp::drawImages(vector <ofVec2f> currentPath){
     vector <ObjectData> closestImages = closestImageToPoint(currentPath);
     cout << "closestImages: " << closestImages.size() << endl;
     for (int i = 0; i < closestImages.size(); i++){
-        cout << "closestImages name: " << closestImages[i].mName << endl;
-        if(ofGetFrameNum()%24==0){
-
+        cout << "closestImages #" << i << ": " << closestImages[i].mName << endl;
         ofPushMatrix();
         ofTranslate((ofGetWidth()*0.5 - myImage.getWidth()), mouseOffSetY);
+        
+        if(ofGetFrameNum()%24==0){
         closestImages[i].mImg.draw(0, 0, closestImages[i].mImg.getWidth(), closestImages[i].mImg.getHeight());
         }
         ofPopMatrix();
