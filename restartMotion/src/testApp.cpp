@@ -71,13 +71,13 @@ void testApp::draw() {
         loadingImageObjectData();
     }
 
-    else if(mode == 2 && currPath.size() >= 3){
+    if(mode == 2){
         drawImages(currPathPoint);
-//        drawImages(currPath);
+        
     }
     
-    else {
-//        loadDataAuto();
+    if (mode == 4){
+        drawImages(currPath);
     }
     
     // draw rect to visualize the currPathPoint
@@ -191,8 +191,18 @@ void testApp::mousePressed(int x, int y, int button) {
             currPathPoint = ofVec2f(x - mouseOffSetX, y - mouseOffSetY);
             cout << "currentPathPoint: " << currPathPoint << endl;
             
-            
             currPath.push_back( currPathPoint );
+            cout << "currPath: " << currPath.size() << endl;
+        }
+    }
+    
+    if (mode == 3){
+        if (x >= mouseOffSetX && x <= mouseOffSetX + rectWidth && y>= mouseOffSetY && y <= mouseOffSetY + rectHeight){
+            // click to make path points
+            currPoint = ofVec2f(x - mouseOffSetX, y - mouseOffSetY);
+            cout << "currentPoint: " << currPoint << endl;
+            
+            currPath.push_back( currPoint );
             cout << "currPath: " << currPath.size() << endl;
         }
     }
@@ -208,6 +218,9 @@ void testApp::keyPressed(int key) {
     if(key == '2') {
 		mode = 2;
 	}
+    if(key == '3') {
+		mode = 3;
+	}
 	if(key == 'h') {
 		trackingColorMode = TRACK_COLOR_H;
 	}
@@ -216,6 +229,16 @@ void testApp::keyPressed(int key) {
 	}
     if(key == 'f') {
         ofToggleFullscreen();
+	}
+    
+    if(key == 's') {
+        mode = 4;
+        cout <<"S was pressed, drawImages" << endl;
+	}
+    
+    if(key == 'c') {
+        currPath.clear();
+        cout <<"C was pressed" << currPath.size() << endl;
 	}
     
     // cycle through the imageObjects
@@ -238,39 +261,44 @@ void testApp::keyPressed(int key) {
 }
 
 ////------------------- this is to load many points at once, need to finish ----------------------
-//vector <ObjectData> testApp:: closestImageToPoint(vector<ofVec2f> pathPoints){
-//    float minDist = 10000;
-//    int closestImageIndex = 0;
-//    vector <ObjectData> imageObjectsSet;
-//
-//    for (int j=0; j<pathPoints.size(); j++){
-//    for (int i =0; i<imageObjects.size(); i++) {
-//        float d = imageObjects[i].measureDistance(pathPoints[j]);
-//
-//        if(d < minDist){
-//            minDist = d;
-//            closestImageIndex = i;
-//            imageObjectsSet.push_back(imageObjects[closestImageIndex]);
-//            cout <<"imageObejctsSet: " << imageObjectsSet.size() << endl;
-//        }
-//    }
-//}
-//    return imageObjectsSet;
-//}
+vector <ObjectData> testApp:: closestImageToPoint(vector<ofVec2f> pathPoints){
+    float minDist = 10000;
+    int closestImageIndex = 0;
+    vector <ObjectData> imageObjectsSet;
 
-//void testApp::drawImages(vector <ofVec2f> currentPath){
-//    // to search vector of points and get vector of ObjectData
-//    vector <ObjectData> closestImages = closestImageToPoint(currentPath);
-//    cout << "closestImages: " << closestImages.size() << endl;
-////    for (int i = 0; i < closestImages.size(); i++){
-////        cout << "currPath: " << currPath.size() << endl;
-////        ofPushMatrix();
-////        ofTranslate((ofGetWidth()*0.5 - myImage.getWidth()), mouseOffSetY);
-////        closestImages[i].mImg.draw(0, closestImages[i].mImg.getWidth(), closestImages[i].mImg.getWidth(), closestImages[i].mImg.getHeight());
-////        ofPopMatrix();
-//
-////    }
-//}
+    for (int j=0; j<pathPoints.size(); j++){
+        cout << "pathPoints: " << pathPoints.size() << endl;
+    for (int i =0; i<imageObjects.size(); i++) {
+        float d = imageObjects[i].measureDistance(pathPoints[j]);
+
+        if(d < minDist){
+            minDist = d;
+            closestImageIndex = i;
+        }
+            minDist =1000;
+    }
+        imageObjectsSet.push_back(imageObjects[closestImageIndex]);
+        cout <<"imageObejctsSet: " << imageObjectsSet.size() << endl;
+
+}
+    return imageObjectsSet;
+}
+
+void testApp::drawImages(vector <ofVec2f> currentPath){
+    // to search vector of points and get vector of ObjectData
+    vector <ObjectData> closestImages = closestImageToPoint(currentPath);
+    cout << "closestImages: " << closestImages.size() << endl;
+    for (int i = 0; i < closestImages.size(); i++){
+        cout << "closestImages name: " << closestImages[i].mName << endl;
+        if(ofGetFrameNum()%24==0){
+
+        ofPushMatrix();
+        ofTranslate((ofGetWidth()*0.5 - myImage.getWidth()), mouseOffSetY);
+        closestImages[i].mImg.draw(0, 0, closestImages[i].mImg.getWidth(), closestImages[i].mImg.getHeight());
+        }
+        ofPopMatrix();
+    }
+}
 
 ////---------------this is to load the data automatically. need to finish this.-------------------
 //void testApp:: loadDataAuto(){

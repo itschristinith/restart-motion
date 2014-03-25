@@ -49,6 +49,7 @@ public:
     vector <ObjectData> imageObjectsSet;
     
     ofVec2f currPathPoint;
+    ofVec2f currPoint;
     vector<ofVec2f> currPath;
     
     int mode;
