@@ -47,6 +47,7 @@ public:
     ObjectData oData;
     vector<ObjectData> imageObjects;
     vector <ObjectData> imageObjectsSet;
+    vector <ObjectData> closestImages;
     
     ofVec2f currPathPoint;
     ofVec2f currPoint;
@@ -56,4 +57,7 @@ public:
     float contourW;
     float contourH;
     float contourR;
+    int currentDrawIndex;
+    
+    int animationIndex;
 };
