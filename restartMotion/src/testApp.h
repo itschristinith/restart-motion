@@ -14,12 +14,13 @@ public:
 	void keyPressed(int key);
     void guiEvent(ofxUIEventArgs &e);
     void loadingImageObjectData();
-    void loadDataAuto(int x);
+    void loadDataAuto();
     void drawImages(ofVec2f currPathPoint);
     void drawImages(vector<ofVec2f> currentPath);
     void drawRect();
     void drawPath(int r, int g, int b);
     void drawAnimatedPoints(int r, int g, int b);
+    void loadImgsFromDir();
     ObjectData closestImageToPoint(ofVec2f pathPoint);
     vector <ObjectData> closestImageToPoint(vector<ofVec2f> pathPoints);
     void exit();
@@ -66,4 +67,9 @@ public:
     float contourR;
     
     int animationIndex;
+    
+    string dirNameEdit;
+    string dirNameOrig;
+    ofDirectory myDirEdit;
+    ofDirectory myDirOrig;
 };
