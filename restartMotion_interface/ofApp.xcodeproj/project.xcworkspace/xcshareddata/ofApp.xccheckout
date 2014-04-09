@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>IDESourceControlProjectFavoriteDictionaryKey</key>
+	<false/>
+	<key>IDESourceControlProjectIdentifier</key>
+	<string>B0943C79-408C-4AD9-BBAD-4F43B15E7694</string>
+	<key>IDESourceControlProjectName</key>
+	<string>ofApp</string>
+	<key>IDESourceControlProjectOriginsDictionary</key>
+	<dict>
+		<key>8AFCC414-865F-4B89-ADF0-E8FAB3A40377</key>
+		<string>ssh://github.com/rezaali/ofxUI.git</string>
+		<key>AC6FD579-05A6-468C-94F0-8C362CD11FCE</key>
+		<string>https://github.com/kylemcdonald/ofxCv.git</string>
+		<key>E0AD2F6E-64D5-4A2D-B279-59368D15077A</key>
+		<string>https://github.com/itschristinith/restart-motion.git</string>
+	</dict>
+	<key>IDESourceControlProjectPath</key>
+	<string>restartMotion/ofApp.xcodeproj/project.xcworkspace</string>
+	<key>IDESourceControlProjectRelativeInstallPathDictionary</key>
+	<dict>
+		<key>8AFCC414-865F-4B89-ADF0-E8FAB3A40377</key>
+		<string>../../../../../addons/ofxUI</string>
+		<key>AC6FD579-05A6-468C-94F0-8C362CD11FCE</key>
+		<string>../../../../../addons/ofxCv</string>
+		<key>E0AD2F6E-64D5-4A2D-B279-59368D15077A</key>
+		<string>../../..</string>
+	</dict>
+	<key>IDESourceControlProjectURL</key>
+	<string>https://github.com/itschristinith/restart-motion.git</string>
+	<key>IDESourceControlProjectVersion</key>
+	<integer>110</integer>
+	<key>IDESourceControlProjectWCCIdentifier</key>
+	<string>E0AD2F6E-64D5-4A2D-B279-59368D15077A</string>
+	<key>IDESourceControlProjectWCConfigurations</key>
+	<array>
+		<dict>
+			<key>IDESourceControlRepositoryExtensionIdentifierKey</key>
+			<string>public.vcs.git</string>
+			<key>IDESourceControlWCCIdentifierKey</key>
+			<string>AC6FD579-05A6-468C-94F0-8C362CD11FCE</string>
+			<key>IDESourceControlWCCName</key>
+			<string>ofxCv</string>
+		</dict>
+		<dict>
+			<key>IDESourceControlRepositoryExtensionIdentifierKey</key>
+			<string>public.vcs.git</string>
+			<key>IDESourceControlWCCIdentifierKey</key>
+			<string>8AFCC414-865F-4B89-ADF0-E8FAB3A40377</string>
+			<key>IDESourceControlWCCName</key>
+			<string>ofxUI</string>
+		</dict>
+		<dict>
+			<key>IDESourceControlRepositoryExtensionIdentifierKey</key>
+			<string>public.vcs.git</string>
+			<key>IDESourceControlWCCIdentifierKey</key>
+			<string>E0AD2F6E-64D5-4A2D-B279-59368D15077A</string>
+			<key>IDESourceControlWCCName</key>
+			<string>thesis</string>
+		</dict>
+	</array>
+</dict>
+</plist>
