@@ -5,55 +5,88 @@ using namespace ofxCv;
 using namespace cv;
 
 void testApp::setup() {
-    ofBackground(0, 0, 0);
     
+    
+    bg.loadImage("shapes.png");
 	trackingColorMode = TRACK_COLOR_HSV;
     
     threshold = 100;
     minAreaValue = 0;
     maxAreaValue =100;
-    mode = 3;
-//    mouseOffSetX = (ofGetWidth() - frameWidth*2)*0.5;
-//    mouseOffSetY = (ofGetHeight() - frameHeight*2)*0.5;
+    mode = 0;
     frameWidth = 320;
     frameHeight = 240;
-    tileColor = (ofColor(ofRandom(128, 255), 0, 0));
-    vector<string> modes;
-    modes.push_back("0");
-    modes.push_back("1");
-    modes.push_back("2");
-    modes.push_back("3");
-    modes.push_back("4");
-    gui = new ofxUICanvas(0 , 0, ofGetWidth() *0.3, ofGetHeight() * 0.2);
-//    gui->addButton("MODE", false);
-//    gui->addRadio("MODE", modes, 1, 15, 15);
-    
-    gui->addLabel("MODE");
-    gui->addSpacer();
-    gui->addLabel("'0' FOR NOTHING", OFX_UI_FONT_SMALL);
-    gui->addLabel("'1' FOR NOTHING", OFX_UI_FONT_SMALL);
-    gui->addLabel("'2' TO DRAW INDIVIDUAL POINTS", OFX_UI_FONT_SMALL);
-    gui->addLabel("'3' TO DRAW MANY POITNS", OFX_UI_FONT_SMALL);
-    gui->addSpacer();
-    gui->setWidgetFontSize(OFX_UI_FONT_SMALL);
-    gui->addToggle("SHOW ACTIVE", false);
-    ddl = gui->addDropDownList("DYNAMIC DROP DOWN", modes);
-    ddl->setAllowMultiple(true);
-    //    ddl->setAutoClose(true);
-    gui->autoSizeToFitWidgets();
-    //    gui->setDrawWidgetPadding(true);
-//    ofAddListener(gui->newGUIEvent, this, &ofApp::guiEvent);
+    currPathPoint = ofVec2f(-2000, -2000);
+    currPoint = ofVec2f(-2000, -2000);
 
+    vector<string> ddmodes;
+    ddmodes.push_back("DEMO MODE");
+    ddmodes.push_back("DRAW MODE");
+    
+    myfont.loadFont("GUI/LetterGothicStd.otf", 32);
+    myfontS.loadFont("GUI/LetterGothicStd-Slanted.otf", 32);
+    myfontB.loadFont("GUI/LetterGothicStd-Bold.otf", 32);
+    myfontSB.loadFont("GUI/LetterGothicStd-BoldSlanted.otf", 32);
+    ofEnableAlphaBlending();
+    
+    gui = new ofxUICanvas(2, 5, ofGetWidth() *0.3, ofGetHeight() * 0.2);
+    gui->setFont("GUI/LetterGothicStd.otf");
+//    gui->setPosition(2, 5);
+    gui->setTheme(29); //OFX_UI_THEME_RUSTICORANGE use with ofBackground(33, 46, 48, 10);//dark blue
+    
+//    ddmode = gui->addDropDownList("SELECT MODE", ddmodes);
+//    ddmode->setAllowMultiple(false);
+//    ddmode->setAutoClose(false);
+    gui->addWidgetDown(new ofxUILabel("SELECT MODE", OFX_UI_FONT_LARGE));
+    gui->addSpacer();
+    gui->addRadio("Mode", ddmodes, OFX_UI_ORIENTATION_VERTICAL);
+    gui->autoSizeToFitWidgets();
+    ofAddListener(gui->newGUIEvent,this,&testApp::guiEvent);
+    
+    vector<string>output;
+    output.push_back("GENERATE SINGLE FRAME");
+    output.push_back("GENERATE PATTERN");
+    
+    gui2 = new ofxUICanvas(2, 0, ofGetWidth() *0.6, ofGetHeight());
+    gui2->setFont("GUI/LetterGothicStd.otf");
+    gui2->setTheme(29);
+    gui2->addTextArea("instructions", "Draw a path of points in the frame above. Then click below to see your animation in a single frame or as a pattern.");
+    gui2->addSpacer();
+    gui2->addRadio("Output", output, OFX_UI_ORIENTATION_VERTICAL);
+    gui2->addButton("NEW PATH", false);
+//    gui2->autoSizeToFitWidgets();
+    gui2->setVisible(false);
+    
+    ofAddListener(gui2->newGUIEvent,this,&testApp::guiEvent);
+    
+//    gui2->addButton("GENERATE FRAMES", false);
+//    gui2->addButton("GENERATE PATTERN", false);
+//    gui2->addButton("NEW PATH", false);
+
+    
+//    gui->addToggle("DEMO MODE", true);
+//    gui->addToggle("DRAW MODE", false);
+
+//    gui->addWidgetEastOf(new ofxUIToggle("DRAW MODE", false, false, false), "DEMO MODE");
+//    toggle = gui->addToggleMatrix("MODE", 1, 2, "Draw", "Demo");
+//    toggle->setAllowMultiple(false);
+//    gui->addWidgetEastOf(gui->addToggle("DRAW MODE", false), "DEMO MODE");
+//    gui->addToggle("SHOW ACTIVE", false);
+    
+//    ddl = gui->addDropDownList("DYNAMIC DROP DOWN", modes);
+//    ddl->setAllowMultiple(false);
+//    ddl->setAutoClose(true);
+    
+//    gui->setDrawWidgetPadding(true);
+//    ofAddListener(gui->newGUIEvent, this, &ofApp::guiEvent);
 //    gui->addSlider("CONT THRESHOLD", 0, 255, &threshold);
 //    gui->addMinimalSlider("MIN AREA", 0.0, 100.0, &minAreaValue);
 //    gui->addMinimalSlider("MAX AREA", 0.0, 100.0, &maxAreaValue);
-    gui->addSpacer();
+//    gui->addSpacer();
+//    gui->addImage("SAMPLE COLOUR", &sampleColor, 10, 10);
     
     loadImgsFromDir();
-    
-    //    gui->addImage("SAMPLE COLOUR", &sampleColor, 10, 10);
-    ofAddListener(gui->newGUIEvent,this,&testApp::guiEvent);
-    
+        
     animationIndex = -1;
     loadDataAuto();
     
@@ -77,7 +110,7 @@ void testApp::update() {
 //        thresholdImage.update();
 //        
 //    }
-    mouseOffSetX = (ofGetWidth() - frameWidth*2)*0.5;
+    mouseOffSetX = (ofGetWidth() - frameWidth)*0.5;
     mouseOffSetY = (ofGetHeight() - frameHeight*2)*0.5;
     
 //    //adjust size of frame if in mode 3 and therefore mode 4
@@ -89,30 +122,56 @@ void testApp::update() {
 }
 
 void testApp::draw() {
+//    ofBackground(220, 174, 154); //beige
+//    ofBackground(114, 112, 136); //blue
+      ofBackground(33, 46, 48, 100);//dark blue
+//    ofBackground(103, 147, 142, 40);//light blue
+//    ofBackground(244, 236, 93); //yellow
 //    ofBackgroundGradient(ofColor::gray, ofColor::black);
-
+    
+//    ofPushStyle();
+//    ofSetColor(255,255,255, 50);
+//    bg.draw(50, 50, bg.getWidth(), bg.getHeight());
+//    ofPopStyle();
+    
+    ofPushStyle();
+    ofSetColor(211, 84, 40, 255);//orange
+    ofFill();
+    myfontB.drawString("RESTART", ofGetWidth()/2-150, 37);
+    myfontS.drawString("MOTION", ofGetWidth()/2+30, 37);
+    ofPopStyle();
     
     if(mode == 0){ //load data
 //        loadingImageObjectData();
     }
     
     if(mode == 1){
+   
     }
     
     if(mode == 2){ //pick one image at a time
         ofPushMatrix();
         ofTranslate(0, ofGetHeight()-300);
-        drawImageTiles(closestImageIndex);
+        
+//        ofTranslate(ofGetWidth()*.2, 0); //for poster
+        drawImageTiles();
         ofPopMatrix();
         
         drawRect();
         drawImages(currPathPoint);
+        
     }
     
     if(mode == 3){ //set a path to select multiple images at once
         // draw rect and each point to visualize location
         drawRect();
         drawPath(0, 0, 0);
+        ofPushStyle();
+        ofSetColor(0, 0, 255);
+        ofFill();
+        
+        line.draw();
+        ofPopStyle();
     }
     
     if (mode == 4){ //see the path animated and draw the images at the same time
@@ -128,15 +187,22 @@ void testApp::draw() {
         
         if(animationIndex > closestImages.size()-1)
             animationIndex = 0;
-//        cout << "animationIndex = " << animationIndex << endl;
         
         // draw points in diff color to visualize path
-        drawAnimatedPoints(255, 0, 0);
+//        drawAnimatedPoints(255, 0, 0);
     }
     
     if (mode == 5){
         generatePattern();
     }
+//for poster
+//    ofPushStyle();
+//    ofSetColor(211, 84, 40, 255);//orange
+//    ofFill();
+//    myfontB.drawString("RESTART", ofGetWidth()/2-160, ofGetHeight()*.5);
+//    myfontS.drawString("MOTION", ofGetWidth()/2+20, ofGetHeight()*.5);
+//    ofPopStyle();
+
 }
 
 //------------------------------ loadImages from directory  -----------------------------//
@@ -251,8 +317,29 @@ void testApp:: loadDataAuto(){
 }
 
 //-------------------------------- draw image tiles ------------------------------------//
+//for poster
+//void testApp::drawImageTiles(){
+//    
+//    row = 12;
+//    col = 9;
+//    gridWidth = ofGetWidth()*.6 / col;
+//    gridHeight = ofGetHeight() / row;
+//    
+//    
+//    for (int i = 0; i < row; i++) {
+//        for (int j = 0; j < col; j++) {
+//            index = j + i * col;
+//            ofPushStyle();
+//            ofSetColor(255, 255, 255, 75);
+//            tile = mOriginalImages[index];
+//            tile.draw(j*gridWidth, i*gridHeight, gridWidth, gridHeight);
+//            //            cout << index << " -- (" << i << "," << j << ")  -- " << gridWidth << "," << gridHeight << endl;
+//            ofPopStyle();
+//        }
+//    }
+//}
 
-void testApp::drawImageTiles(int selectedImg){
+void testApp::drawImageTiles(){
     
     row = 5;
     col = 23;
@@ -263,32 +350,57 @@ void testApp::drawImageTiles(int selectedImg){
     for (int i = 0; i < row; i++) {
         for (int j = 0; j < col; j++) {
             index = j + i * col;
+            ofPushStyle();
+            ofSetColor(255, 255, 255, 100);
             tile = mOriginalImages[index];
             tile.draw(j*gridWidth, i*gridHeight, gridWidth, gridHeight);
-            cout << index << " -- (" << i << "," << j << ")  -- " << gridWidth << "," << gridHeight << endl;
+//            cout << index << " -- (" << i << "," << j << ")  -- " << gridWidth << "," << gridHeight << endl;
+            ofPopStyle();
         }
     }
 }
-//
-void testApp::drawCurrImage(int currIndex) {
-    int indexWidth = gridWidth * currIndex;
-    int indexHeight = gridHeight * currIndex;
+
+void testApp::highlightSelectedImg(int selectedImg) {
+    int indexWidth = selectedImg%23; //equivalent of j
+    int indexHeight = ceil(selectedImg/23); //equivalent of i
     for (int i = 0; i < row; i++) {
         for (int j = 0; j < col; j++) {
-//            index = j + i * col;
+            
             ofPushMatrix();
             ofTranslate(0, ofGetHeight()-300);
+            mOriginalImages[selectedImg].draw(indexWidth*gridWidth - gridWidth*.15, indexHeight*gridHeight - gridHeight*0.15, gridWidth*1.3, gridHeight*1.3);
             ofPushStyle();
-            ofFill();
-            ofSetColor(0);
-            ofRect(j*indexWidth, i*indexHeight, gridWidth, gridHeight);
+            ofNoFill();
+            ofSetColor(255, 0, 0);
+            ofRect(indexWidth*gridWidth - gridWidth*.15, indexHeight*gridHeight - gridHeight*0.15, gridWidth*1.3, gridHeight*1.3);
             ofPopStyle();
             ofPopMatrix();
-            cout << currIndex << " -- (" << i << "," << j << ")  -- " << gridWidth << "," << gridHeight << endl;
         }
     }
 
 }
+
+//void testApp::poster(){
+//    
+//    row = 15;
+//    col = 23;
+//    gridWidth = ofGetWidth() / col;
+//    gridHeight = ofGetHeight() / row;
+//    
+//    
+//    for (int i = 0; i < row; i++) {
+//        for (int j = 0; j < col; j++) {
+//            index = j + i * col;
+//            ofPushStyle();
+//            ofSetColor(255, 255, 255, 100);
+//            tile = mOriginalImages[index];
+//            tile.draw(j*gridWidth, i*gridHeight, gridWidth, gridHeight);
+//            //            cout << index << " -- (" << i << "," << j << ")  -- " << gridWidth << "," << gridHeight << endl;
+//            ofPopStyle();
+//        }
+//    }
+//}
+
 
 //------------------------ load many points and images at once --------------------------//
 
@@ -332,7 +444,7 @@ void testApp:: drawRect(){
     ofPushStyle();
     ofTranslate(mouseOffSetX, mouseOffSetY);
     ofFill();
-    ofSetColor(255);
+    ofSetColor(255, 255, 200, 150);
     ofRect(0, 0, frameWidth, frameHeight);
     ofPopStyle();
     ofPopMatrix();
@@ -370,14 +482,14 @@ void testApp::generatePattern(){
 
     // animate frames, upper left
     ofPushMatrix();
-    ofTranslate(mouseOffSetX, mouseOffSetY);
+    ofTranslate(mouseOffSetX-frameWidth/2, mouseOffSetY);
     closestImages[animationIndex].mImg.draw(0, 0, closestImages[animationIndex].mImg.getWidth(), closestImages[animationIndex].mImg.getHeight());
     //        animationIndex++;
     ofPopMatrix();
     
     // animate frame, upper right
     ofPushMatrix();
-    ofTranslate(mouseOffSetX + frameWidth, mouseOffSetY);
+    ofTranslate(mouseOffSetX + frameWidth/2, mouseOffSetY);
     ofImage upperRight = closestImages[animationIndex].mImg;
     
     upperRight.mirror(0, 180);
@@ -387,7 +499,7 @@ void testApp::generatePattern(){
     
     // animate frame, bottom right
     ofPushMatrix();
-    ofTranslate(mouseOffSetX + frameWidth, mouseOffSetY + frameHeight);
+    ofTranslate(mouseOffSetX + frameWidth/2, mouseOffSetY + frameHeight);
     upperRight.mirror(180, 0);
     upperRight.draw(0, 0, closestImages[animationIndex].mImg.getWidth(), closestImages[animationIndex].mImg.getHeight());
     //        animationIndex++;
@@ -395,7 +507,7 @@ void testApp::generatePattern(){
     
     // animate frame, bottom left
     ofPushMatrix();
-    ofTranslate(mouseOffSetX, mouseOffSetY + frameHeight);
+    ofTranslate(mouseOffSetX-frameWidth/2, mouseOffSetY + frameHeight);
     upperRight.mirror(0, 180);
     upperRight.draw(0, 0, closestImages[animationIndex].mImg.getWidth(), closestImages[animationIndex].mImg.getHeight());
     animationIndex++;
@@ -420,7 +532,7 @@ void testApp::mousePressed(int x, int y, int button) {
     }
     
     if (mode == 1){
-    
+        
     }
     
     if (mode == 2){
@@ -444,6 +556,32 @@ void testApp::mousePressed(int x, int y, int button) {
         }
     }
 }
+
+void testApp::mouseDragged(int x, int y, int button){
+    if (mode == 3){
+        ofPolyline line;
+
+        if (x >= mouseOffSetX && x <= mouseOffSetX + frameWidth && y>= mouseOffSetY && y <= mouseOffSetY + frameHeight){
+            
+            vector<ofPoint> verts;
+            verts.push_back(ofPoint(x - mouseOffSetX, y - mouseOffSetY));
+//                        line.addVertices(verts);
+            
+        }
+//        line.draw();
+        
+        cout << "polyLine: " << &line.getVertices() << endl;
+
+    }
+
+}
+
+void testApp::mouseReleased(int x, int y, int button){
+    line.addVertices(verts);
+    line.close();
+    cout << "mouseReleased" << endl;
+}
+
 
 void testApp::keyPressed(int key) {
     if(key == '0') {
@@ -558,17 +696,15 @@ ObjectData testApp:: closestImageToPoint(ofVec2f pathPoint){
             closestImageIndex = i;
         }
     }
-    if (mode == 2){
-        drawCurrImage(closestImageIndex);
-    }
-    return originalImageObjects[closestImageIndex];
+    highlightSelectedImg(closestImageIndex);
+     return originalImageObjects[closestImageIndex];
 }
 
 void testApp::drawImages(ofVec2f currPathPoint){
     // to search one point at a time
     ObjectData closestImage = closestImageToPoint(currPathPoint);
     ofPushMatrix();
-    ofTranslate((ofGetWidth()*0.5 - myImage.getWidth()), mouseOffSetY);
+    ofTranslate(mouseOffSetX, mouseOffSetY);
     closestImage.mImg.draw(0, 0, closestImage.mImg.getWidth(), closestImage.mImg.getHeight());
     ofPopMatrix();
     
@@ -636,6 +772,57 @@ void testApp::guiEvent(ofxUIEventArgs &e)
 	string name = e.widget->getName();
 	int kind = e.widget->getKind();
 	
+    if (name == "SHOW ACTIVE"){
+        ofxUIToggle *toggle = (ofxUIToggle *) e.widget;
+        ddl->setShowCurrentSelected(toggle->getValue());
+    }
+    
+    else if (name == "SELECT MODE"){
+        ofxUIDropDownList *ddlist = (ofxUIDropDownList *) e.widget;
+        vector<ofxUIWidget *> &selected = ddlist->getSelected();
+        
+            }
+    
+    else if (name == "DEMO MODE"){
+        mode = 2;
+        gui2->setVisible(false);
+    }
+    
+    else if (name == "DRAW MODE"){
+        mode = 3;
+        gui2->setVisible(true);
+        gui2->setPosition(2, mouseOffSetY);
+    }
+    
+    else if (name == "GENERATE SINGLE FRAME"){
+        if (currPath.size() == 0){
+            mode = 3;
+        }
+        else {
+            
+        mode = 4;
+        drawImages(currPath);
+        ofSetFrameRate(4);
+        }
+    }
+    
+    else if (name == "GENERATE PATTERN"){
+        if (currPath.size() == 0){
+            mode = 3;
+        }
+        else {
+        mode = 5;
+        drawImages(currPath);
+        ofSetFrameRate(4);
+        }
+    }
+    
+    else if (name == "NEW PATH"){
+        currPath.clear();
+        mode = 3;
+    }
+
+
     //	if(name == "RED")
     //	{
     //		ofxUISlider *slider = (ofxUISlider *) e.widget;
@@ -676,4 +863,5 @@ void testApp::guiEvent(ofxUIEventArgs &e)
 void testApp::exit()
 {
     delete gui;
+    delete gui2;
 }

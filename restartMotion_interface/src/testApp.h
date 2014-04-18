@@ -14,6 +14,8 @@ public:
 	void draw();
     void mousePressed(int x, int y, int button);
 	void keyPressed(int key);
+    void mouseDragged(int x, int y, int button);
+    void mouseReleased(int x, int y, int button);
     void guiEvent(ofxUIEventArgs &e);
     void loadingImageObjectData();
     void loadDataAuto();
@@ -24,17 +26,29 @@ public:
     void drawAnimatedPoints(int r, int g, int b);
     void generatePattern();
     void loadImgsFromDir();
-    void drawImageTiles(int selectedImg);
-    void drawCurrImage(int currIndex);
+    void drawImageTiles();
+    void highlightSelectedImg(int selectedImg);
+    void poster();
     
     void writeJSON();
-    
+    ofImage bg;
     ObjectData closestImageToPoint(ofVec2f pathPoint);
     vector <ObjectData> closestImageToPoint(vector<ofVec2f> pathPoints);
     void exit();
-
+    
 	ofxUICanvas * gui;
     ofxUIDropDownList *ddl;
+    ofxUIDropDownList *ddmode;
+    ofxUIToggleMatrix *toggle;
+//    ofxUIWidget *toggle;
+    
+    ofTrueTypeFont myfont;
+    ofTrueTypeFont myfontS;
+    ofTrueTypeFont myfontB;
+    ofTrueTypeFont myfontSB;
+    
+    ofxUICanvas * gui2;
+    ofxUICanvas * gui3;
     
     int mouseOffSetX;
     int mouseOffSetY;
@@ -57,8 +71,8 @@ public:
     string myImageName;
     
     ofImage tile;
-    int row;
-    int col;
+    float row;
+    float col;
     int index;
     float gridWidth;
     float gridHeight;
@@ -79,6 +93,10 @@ public:
     ofVec2f currPathPoint;
     ofVec2f currPoint;
     vector<ofVec2f> currPath;
+    
+    ofPolyline line;
+    vector<ofPoint> verts;
+    
     
     int mode;
     float contourW;
