@@ -23,7 +23,7 @@ public:
     void drawImages(vector<ofVec2f> currentPath);
     void drawRect();
     void drawPath(int r, int g, int b);
-    void drawAnimatedPoints(int r, int g, int b);
+    void drawAnimatedPoints(int r, int g, int b, int a);
     void generatePattern();
     void loadImgsFromDir();
     void drawImageTiles();
@@ -41,6 +41,7 @@ public:
     ofxUIDropDownList *ddmode;
     ofxUIToggleMatrix *toggle;
 //    ofxUIWidget *toggle;
+    ofxUIRadio *myRadio;
     
     ofTrueTypeFont myfont;
     ofTrueTypeFont myfontS;
@@ -54,8 +55,10 @@ public:
     int mouseOffSetY;
     int frameWidth;
     int frameHeight;
-    
+    int frameRate;
     int closestImageIndex;
+    int previousImage;
+    bool mouseOverMode;
     
     ofxCv::ContourFinder contourFinder;
     float threshold;
@@ -77,7 +80,6 @@ public:
     float gridWidth;
     float gridHeight;
     
-
     
     vector<ofImage> mImages;
     vector<ofImage> mOriginalImages;
@@ -90,12 +92,15 @@ public:
     vector <ObjectData> imageObjectsSet;
     vector <ObjectData> closestImages;
     
+    ofVec2f mouseOverPath;
+    vector<ofVec2f> currPath;
     ofVec2f currPathPoint;
     ofVec2f currPoint;
-    vector<ofVec2f> currPath;
     
     ofPolyline line;
-    vector<ofPoint> verts;
+    vector<ofVec2f> verts;
+    ofPath drawing;
+    ofPolyline path;
     
     
     int mode;
