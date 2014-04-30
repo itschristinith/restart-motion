@@ -36,20 +36,22 @@ public:
     vector <ObjectData> closestImageToPoint(vector<ofVec2f> pathPoints);
     void exit();
     
-	ofxUICanvas * gui;
+	ofxUICanvas * gui1;
     ofxUIDropDownList *ddl;
     ofxUIDropDownList *ddmode;
-    ofxUIToggleMatrix *toggle;
-//    ofxUIWidget *toggle;
+//    ofxUIToggleMatrix *toggle;
+    ofxUIToggle *toggle;
     ofxUIRadio *myRadio;
+    
+    ofxUICanvas * gui1a;
+    ofxUICanvas * gui2;
+    ofxUICanvas * gui2a;
+    ofxUICanvas * gui3;
     
     ofTrueTypeFont myfont;
     ofTrueTypeFont myfontS;
     ofTrueTypeFont myfontB;
     ofTrueTypeFont myfontSB;
-    
-    ofxUICanvas * gui2;
-    ofxUICanvas * gui3;
     
     int mouseOffSetX;
     int mouseOffSetY;
@@ -57,8 +59,11 @@ public:
     int frameHeight;
     int frameRate;
     int closestImageIndex;
+    int highlightedImage;
+    vector <int> highlightedImagesArray;
     int previousImage;
     bool mouseOverMode;
+    bool imageTiles;
     
     ofxCv::ContourFinder contourFinder;
     float threshold;
@@ -101,7 +106,6 @@ public:
     vector<ofVec2f> verts;
     ofPath drawing;
     ofPolyline path;
-    
     
     int mode;
     float contourW;
