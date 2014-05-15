@@ -4,6 +4,8 @@
 #include "ofxCv.h"
 #include "ofxUI.h"
 #include "ObjectData.h"
+#include "ofxTween.h"
+#include "ofxMousePointers.h"
 #include <fstream>
 #include <iostream>
 
@@ -18,6 +20,7 @@ public:
     void mouseReleased(int x, int y, int button);
     void guiEvent(ofxUIEventArgs &e);
     void loadingImageObjectData();
+    void loadImgsFromDirCandle();
     void loadDataAuto();
     void drawImages(ofVec2f currPathPoint);
     void drawImages(vector<ofVec2f> currentPath);
@@ -101,6 +104,7 @@ public:
     vector<ofVec2f> currPath;
     ofVec2f currPathPoint;
     ofVec2f currPoint;
+    ofVec2f randomPathPoint;
     
     ofPolyline line;
     vector<ofVec2f> verts;
@@ -118,4 +122,10 @@ public:
     string dirNameOrig;
     ofDirectory myDirEdit;
     ofDirectory myDirOrig;
+    
+    ofxTween tween;
+    ofxEasingQuint easingquint;
+    
+    bool switchCursor;
+    ofxMousePointer_Radar m_oPointer;
 };

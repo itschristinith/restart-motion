@@ -6,26 +6,24 @@ using namespace cv;
 
 void testApp::setup() {
     
+
+    m_oPointer.setup(true, 10);
     bg.loadImage("shapes.png");
 	trackingColorMode = TRACK_COLOR_HSV;
-    
-    threshold = 100;
+    threshold = 66;
     minAreaValue = 0;
     maxAreaValue =100;
     mode = 0;
-//    frameWidth = 320;
-//    frameHeight = 240;
-    frameWidth = 380;
-    frameHeight = 280;
+    frameWidth = ofGetWidth()/2.6;
+    frameHeight = ofGetHeight()/2.26;
+
     currPathPoint = ofVec2f(-2000, -2000);
     currPoint = ofVec2f(-2000, -2000);
     previousImage = -1;
-    frameRate = 8;
+    frameRate = 12;
     vector<string> ddmodes;
-//    ddmodes.push_back("CREATE AN ANIMATED SEQUENCE");
-//    ddmodes.push_back("ANIMATE IN REAL TIME");
-    ddmodes.push_back("LIVE MODE");
-    ddmodes.push_back("PLAYBACK MODE");
+    ddmodes.push_back("EXPLORE");
+    ddmodes.push_back("ANIMATE");
 
     vector<string>mmodes;
     mmodes.push_back("CLICK");
@@ -39,10 +37,7 @@ void testApp::setup() {
     
     gui1 = new ofxUICanvas(2, 5, ofGetWidth() *0.18, ofGetHeight() * 0.18);
     gui1->setFont("GUI/LetterGothicStd-Bold.otf");
-//    gui1->setFontSize(OFX_UI_FONT_LARGE, 20);
-//    gui1->setFontSize(OFX_UI_FONT_MEDIUM, 16);
     gui1->setFontSize(OFX_UI_FONT_SMALL, 12);
-//    gui->setPosition(2, 5);
     gui1->setTheme(29); //OFX_UI_THEME_RUSTICORANGE (29) use with ofBackground(33, 46, 48, 10);//dark blue
     
     gui1->addWidgetDown(new ofxUILabel("SELECT MODE", OFX_UI_FONT_SMALL));
@@ -51,7 +46,7 @@ void testApp::setup() {
     gui1->autoSizeToFitWidgets();
     ofAddListener(gui1->newGUIEvent,this,&testApp::guiEvent);
     
-    gui1a = new ofxUICanvas(2, 5, ofGetWidth() *0.3, ofGetHeight() * 0.18);
+    gui1a = new ofxUICanvas(2, 15, ofGetWidth() *0.3, ofGetHeight() * 0.18);
     gui1a->setFont("GUI/LetterGothicStd.otf");
     gui1a->setFontSize(OFX_UI_FONT_SMALL, 10);
     gui1a->setTheme(29);
@@ -64,22 +59,19 @@ void testApp::setup() {
     output.push_back("GENERATE SINGLE FRAME");
     output.push_back("GENERATE PATTERN");
     
-    gui2 = new ofxUICanvas(2, 0, ofGetWidth() *0.2, ofGetHeight());
+    gui2 = new ofxUICanvas(2, ofGetHeight()*0.2, ofGetWidth() *0.2, ofGetHeight());
     gui2->setFont("GUI/LetterGothicStd.otf");
     gui2->setFontSize(OFX_UI_FONT_SMALL, 10);
-//    gui2->setFontSize(OFX_UI_FONT_LARGE, 20);
     gui2->setFontSize(OFX_UI_FONT_MEDIUM, 12);
     gui2->setTheme(29);
-//    gui2->addTextArea("instructions", "Draw a path of points in the frame above. Then click below to see your animation in a single frame or as a pattern.");
-//    gui2->addRadio("Output", output, OFX_UI_ORIENTATION_VERTICAL);
     gui2->setWidgetFontSize(OFX_UI_FONT_MEDIUM);
     gui2->addButton("PLAY ANIMATION", false);
-    gui2->addToggle("DRAW NEW PATH", false);
+    gui2->addButton("DRAW NEW PATH", false);
     gui2->autoSizeToFitWidgets();
     gui2->setVisible(false);
     ofAddListener(gui2->newGUIEvent,this,&testApp::guiEvent);
     
-    gui2a = new ofxUICanvas(2, ofGetHeight() * 0.25, ofGetWidth() *0.21, ofGetHeight());
+    gui2a = new ofxUICanvas(2, ofGetHeight() * 0.25, ofGetWidth() *0.185, ofGetHeight()*0.2);
     gui2a->setTheme(29);
     gui2a->setFont("GUI/LetterGothicStd.otf");
     gui2a->setFontSize(OFX_UI_FONT_SMALL, 10);
@@ -89,7 +81,6 @@ void testApp::setup() {
     gui2a->setWidgetFontSize(OFX_UI_FONT_SMALL);
     toggle = gui2a->addToggle("KALEIDOSCOPE", false);
     gui2a->addIntSlider("FRAMERATE", 2, 20, &frameRate);
-    gui2a->autoSizeToFitWidgets();
     gui2a->setVisible(false);
     ofAddListener(gui2a->newGUIEvent,this,&testApp::guiEvent);
     
@@ -100,7 +91,7 @@ void testApp::setup() {
     ofAddListener(gui3->newGUIEvent,this,&testApp::guiEvent);
     
     loadImgsFromDir();
-    
+   
     animationIndex = -1;
     loadDataAuto();
     imageTiles = false;
@@ -109,28 +100,20 @@ void testApp::setup() {
 }
 
 void testApp::update() {
-    mouseOffSetX = (ofGetWidth() - frameWidth)*0.5;
-    mouseOffSetY = (ofGetHeight() - frameHeight*2)*0.5;
+    cout << ofGetHeight()<< endl;
+    cout << ofGetWidth()<< endl;
+    mouseOffSetX = (ofGetWidth() - frameWidth)*0.6;
+    mouseOffSetY = (ofGetHeight() - frameHeight*2)*0.7;
 }
 
 void testApp::draw() {
-//    ofBackground(220, 174, 154); //beige
-//    ofBackground(114, 112, 136); //blue
-      ofBackground(33, 46, 48, 100);//dark blue #212E30
-//    ofBackground(103, 147, 142, 40);//light blue
-//    ofBackground(244, 236, 93); //yellow
-//    ofBackgroundGradient(ofColor::gray, ofColor::black);
-    
-//    ofPushStyle();
-//    ofSetColor(255,255,255, 50);
-//    bg.draw(50, 50, bg.getWidth(), bg.getHeight());
-//    ofPopStyle();
-    
+    ofBackground(33, 46, 48, 100);//dark blue #212E30
     ofPushStyle();
     ofSetColor(211, 84, 40, 255);//orange
     ofFill();
-    myfontB.drawString("RESTART", ofGetWidth()/2-150, 37);
-    myfontS.drawString("MOTION", ofGetWidth()/2+30, 37);
+    myfontB.drawString("RESTART", ofGetWidth()/2-85, 37);
+    myfontS.drawString("MOTION", ofGetWidth()/2+95, 37);
+
     ofPopStyle();
     
     if(mode == 0){
@@ -150,8 +133,6 @@ void testApp::draw() {
     if(mode == 2){ //pick one image at a time
         ofPushMatrix();
         ofTranslate(0, ofGetHeight()-300);
-//        ofTranslate(ofGetWidth()*.2, 0); //for poster
-//        drawImageTiles();
         ofPopMatrix();
         
         drawRect();
@@ -193,9 +174,10 @@ void testApp::draw() {
     if (mode == 5){
         generatePattern();
     }
+
     if (imageTiles){
         ofPushMatrix();
-        ofTranslate(0, ofGetHeight()-300);
+        ofTranslate(0, ofGetHeight()-ofGetHeight()*0.375);
         drawImageTiles();
         ofPopMatrix();
         highlightSelectedImg(highlightedImage);
@@ -211,9 +193,10 @@ void testApp::draw() {
 //------------------------------ loadImages from directory  -----------------------------//
 
 void testApp:: loadImgsFromDir() {
-// void (string path to directory, vector of strings for filenames, ofDirectory name, vector of images)
+
 string dirNameEdit ="/Users/cvcarter/Documents/of_v0.8.0_osx_release/apps/thesis/restartMotion/bin/data/edited"; //directory path
 string dirNameOrig ="/Users/cvcarter/Documents/of_v0.8.0_osx_release/apps/thesis/restartMotion/bin/data/originals";
+    
 vector<string> imageNamesEdit; //vector of strings to store file names
 vector<string> imageNamesOrig;
 
@@ -292,6 +275,7 @@ if(myDirEdit.exists()){ //if directory exists, list the contents
 
 void testApp:: loadDataAuto(){
     ofColor colorRed (255, 0, 0);
+    ofColor candleColor (255, 255, 245);
     targetColor = colorRed;
     
     for(int i =0; i<imageObjects.size();i++){
@@ -308,13 +292,14 @@ void testApp:: loadDataAuto(){
         contourFinder.findContours(myImage);
         
         for (int j = 0;  j<contourFinder.getBoundingRects().size(); j ++) {
+//            if(contourFinder.getBoundingRects()[j].width > 80 && contourFinder.getBoundingRects()[j].width < 200){
             imageObjects[i].center = toOf(contourFinder.getCenter(j));
 //            cout << "center x: " << imageObjects[i].center.x << " y: " << imageObjects[i].center.y << endl;
             imageObjects[i].mCWidth = contourFinder.getBoundingRects()[j].width;
             imageObjects[i].mCHeight = contourFinder.getBoundingRects()[j].height;
             imageObjects[i].mCx = contourFinder.getBoundingRects()[j].x;
             imageObjects[i].mCy = contourFinder.getBoundingRects()[j].y;
-            
+//            }
         }
     }
 }
@@ -325,7 +310,8 @@ void testApp::drawImageTiles(){
     row = 5;
     col = 23;
     gridWidth = ofGetWidth() / col;
-    gridHeight = 300 / row;
+//    gridHeight = 300 / row;
+    gridHeight = ofGetHeight()*0.375 / row;
     
     
     for (int i = 0; i < row; i++) {
@@ -424,10 +410,11 @@ void testApp::drawImages(ofVec2f currPathPoint){
     // to search one point at a time
     ObjectData closestImage = closestImageToPoint(currPathPoint);
     ofPushMatrix();
+    ofPushStyle();
     ofTranslate(mouseOffSetX, mouseOffSetY);
     closestImage.mImg.draw(0, 0, closestImage.mImg.getWidth(), closestImage.mImg.getHeight());
+    ofPopStyle();
     ofPopMatrix();
-    
     
 }
 
@@ -506,15 +493,9 @@ void testApp::drawPath(int r, int g, int b){
     ofPushStyle();
     ofFill();
     ofSetColor(r, g, b);
-//    ofTranslate(mouseOffSetX, mouseOffSetY);
-//    for(int i = 0; i<currPath.size(); i++){
-//        ofCircle(currPath[i].x, currPath[i].y, 5);
-//    }
-    
-    //*****
-        drawing.setFilled(false);
-        drawing.setStrokeColor(ofColor(255, 0, 0));
-        drawing.draw();
+    drawing.setFilled(false);
+    drawing.setStrokeColor(ofColor(255, 0, 0));
+    drawing.draw();
     ofPopStyle();
     ofPopMatrix();
 }
@@ -575,12 +556,10 @@ void testApp::generatePattern(){
 
 }
 
-//------------------------------ mouse over demo mode ---------------------------------//
-
-
 //------------------------------ mouse & key functions ---------------------------------//
 
 void testApp::mousePressed(int x, int y, int button) {
+
     if (mode == 0) {
 
     }
@@ -600,25 +579,14 @@ void testApp::mousePressed(int x, int y, int button) {
     }
     
     if (mode == 3){
-//        if (x >= mouseOffSetX && x <= mouseOffSetX + frameWidth && y>= mouseOffSetY && y <= mouseOffSetY + frameHeight){
-//            currPoint = ofVec2f(x - mouseOffSetX, y - mouseOffSetY); // click to make path points
-//            // cout << "currentPoint: " << currPoint << endl;
-//            
-//            currPath.push_back( currPoint );
-//            cout << "currPath: " << currPath.size() << endl;
-//        }
-        
-        //********
         if(x >= mouseOffSetX && x <= mouseOffSetX + frameWidth && y>= mouseOffSetY && y <= mouseOffSetY + frameHeight){
             drawing.moveTo(x,y);
             verts.push_back( ofVec2f(x - mouseOffSetX, y- mouseOffSetY));
         }
-        //********
     }
 }
 
 void testApp::mouseDragged(int x, int y, int button){
-    //********
     if (mode == 3) {
         if(x >= mouseOffSetX && x <= mouseOffSetX + frameWidth && y>= mouseOffSetY && y <= mouseOffSetY + frameHeight){
             drawing.lineTo(x, y);
@@ -626,7 +594,6 @@ void testApp::mouseDragged(int x, int y, int button){
             verts.push_back(ofVec2f(x - mouseOffSetX, y- mouseOffSetY));
         }
     }
-    //********
 }
 
 void testApp::mouseReleased(int x, int y, int button){
@@ -663,37 +630,25 @@ void testApp::keyPressed(int key) {
     
     if(key == 's') {
         mode = 4;
-//        drawImages(currPath);
-//        ofSetFrameRate(frameRate);
         ofSetFrameRate(frameRate);
         cout <<"S was pressed, drawImages" << endl;
         
-        //******
         drawImages(verts);
-        //******
 	}
     
     if (key == 'p'){
         mode = 5;
-//        drawImages(currPath);
-//        ofSetFrameRate(frameRate);
         ofSetFrameRate(frameRate);
         cout <<"P was pressed, drawImages" << endl;
-        //******
         drawImages(verts);
-        //******
-
     }
     
     if(key == 'c') {
         currPath.clear();
         cout <<"C was pressed. currPath is now: " << currPath.size() << endl;
-        
-        //******
         verts.clear();
         path.clear();
         drawing.clear();
-        //******
 
 	}
     
@@ -709,6 +664,15 @@ void testApp::keyPressed(int key) {
         if (currentImage<imageObjects.size()-1){
             currentImage++;
         }
+    }
+    
+    if(key == 'h'){
+        gui1->toggleVisible();
+//        gui1a->toggleVisible();
+        gui2->toggleVisible();
+        gui2a->toggleVisible();
+        gui3->toggleVisible();
+        
     }
 }
 
@@ -766,34 +730,24 @@ void testApp::guiEvent(ofxUIEventArgs &e)
         
             }
     
-    else if (name == "LIVE MODE"){
+    else if (name == "EXPLORE"){
         mode = 2;
+        ofSetFrameRate(18);
         gui1a->setVisible(true);
-        gui1a->setPosition(2, mouseOffSetY);
+        gui1a->setPosition(2, ofGetHeight()*0.2);
         gui2->setVisible(false);
         gui2a->setVisible(false);
     }
     
-    else if (name == "PLAYBACK MODE"){
+    else if (name == "ANIMATE"){
         mode = 3;
         gui1a->setVisible(false);
         gui2->setVisible(true);
-        gui2->setPosition(2, mouseOffSetY);
+        gui2->setPosition(2, ofGetHeight()*0.15);
     }
     
     else if (name == "GENERATE SINGLE FRAME"){
         
-//        if (currPath.size() == 0){
-//            mode = 3;
-//        }
-//        else {
-//            
-//            mode = 4;
-//            drawImages(currPath);
-//            ofSetFrameRate(frameRate);
-//        }
-
-        //******
         if (verts.size() == 0) {
             mode = 3;
         }
@@ -802,8 +756,6 @@ void testApp::guiEvent(ofxUIEventArgs &e)
             drawImages(verts);
             ofSetFrameRate(frameRate);
         }
-        //******
-
     }
     else if (name == "PLAY ANIMATION"){
         gui2a->setVisible(true);
@@ -818,16 +770,6 @@ void testApp::guiEvent(ofxUIEventArgs &e)
     }
     
     else if (name == "GENERATE PATTERN"){
-//        if (currPath.size() == 0){
-//            mode = 3;
-//        }
-//        else {
-//        mode = 5;
-//        drawImages(currPath);
-//        ofSetFrameRate(frameRate);
-//        }
-        
-        //********
         if (verts.size() == 0){
             mode = 3;
         }
@@ -836,7 +778,6 @@ void testApp::guiEvent(ofxUIEventArgs &e)
             drawImages(verts);
             ofSetFrameRate(frameRate);
         }
-        //********
     }
     
     else if (name == "KALEIDOSCOPE"){
@@ -845,7 +786,6 @@ void testApp::guiEvent(ofxUIEventArgs &e)
 //        toggle = (ofxUIToggle *) e.widget;
         if(toggle->getValue()){
             //kaleidoscope mode
-            //********
             if (verts.size() == 0){
                 mode = 3;
             }
@@ -854,8 +794,6 @@ void testApp::guiEvent(ofxUIEventArgs &e)
                 drawImages(verts);
                 ofSetFrameRate(frameRate);
             }
-            //********
-
         }
         else {
             if (verts.size() == 0) {
@@ -869,12 +807,6 @@ void testApp::guiEvent(ofxUIEventArgs &e)
         }
     }
     
-//    else if (name == "NEW PATH"){
-//        currPath.clear();
-//        mode = 3;
-//    }
-    
-    //**********
     else if (name == "DRAW NEW PATH"){
 //        ofxUIToggle *toggle = (ofxUIToggle *) e.widget;
         toggle->setValue(false);
@@ -884,7 +816,6 @@ void testApp::guiEvent(ofxUIEventArgs &e)
         drawing.clear();
         mode = 3;
     }
-    //**********
     
     else if (name == "MOUSEOVER"){
         mouseOverMode = true;
@@ -909,43 +840,8 @@ void testApp::guiEvent(ofxUIEventArgs &e)
         }
         
     }
-    
-    //	if(name == "RED")
-    //	{
-    //		ofxUISlider *slider = (ofxUISlider *) e.widget;
-    //		red = slider->getScaledValue();
-    //        cout << "value: " << slider->getScaledValue() << endl;
-    //	}
-    //	else if(name == "GREEN")
-    //	{
-    //		ofxUIMinimalSlider *slider = (ofxUIMinimalSlider *) e.widget;
-    //		green = slider->getScaledValue();
-    //        cout << "value: " << slider->getScaledValue() << endl;
-    //	}
-    //	else if(name == "BLUE")
-    //	{
-    //		ofxUIBiLabelSlider *slider = (ofxUIBiLabelSlider *) e.widget;
-    //		blue = slider->getScaledValue();
-    //        cout << "value: " << slider->getScaledValue() << endl;
-    //	}
-    //    else if(name == "RSLIDER")
-    //    {
-    //        ofxUIRangeSlider *rslider = (ofxUIRangeSlider *) e.widget;
-    //        cout << "valuelow: " << rslider->getScaledValueLow() << endl;
-    //        cout << "valuehigh: " << rslider->getScaledValueHigh() << endl;
-    //    }
-    //    else if(name == "PAD")
-    //    {
-    //        ofxUI2DPad *pad = (ofxUI2DPad *) e.widget;
-    //        cout << "value x: " << pad->getScaledValue().x << endl;
-    //        cout << "value y: " << pad->getScaledValue().y << endl;
-    //    }
-    //    else if(name == "CSLIDER" || name == "CSLIDER 2")
-    //    {
-    //        ofxUIRotarySlider *rotslider = (ofxUIRotarySlider *) e.widget;
-    //        cout << "value: " << rotslider->getScaledValue() << endl;
-    //    }
 }
+
 //--------------------------------------------------------------
 void testApp::exit()
 {
@@ -955,54 +851,3 @@ void testApp::exit()
     delete gui2a;
     delete gui3;
 }
-
-//for poster at end of draw loop
-//    ofPushStyle();
-//    ofSetColor(211, 84, 40, 255);//orange
-//    ofFill();
-//    myfontB.drawString("RESTART", ofGetWidth()/2-160, ofGetHeight()*.5);
-//    myfontS.drawString("MOTION", ofGetWidth()/2+20, ofGetHeight()*.5);
-//    ofPopStyle();
-
-//void testApp::poster(){
-//
-//    row = 15;
-//    col = 23;
-//    gridWidth = ofGetWidth() / col;
-//    gridHeight = ofGetHeight() / row;
-//
-//
-//    for (int i = 0; i < row; i++) {
-//        for (int j = 0; j < col; j++) {
-//            index = j + i * col;
-//            ofPushStyle();
-//            ofSetColor(255, 255, 255, 100);
-//            tile = mOriginalImages[index];
-//            tile.draw(j*gridWidth, i*gridHeight, gridWidth, gridHeight);
-//            //            cout << index << " -- (" << i << "," << j << ")  -- " << gridWidth << "," << gridHeight << endl;
-//            ofPopStyle();
-//        }
-//    }
-//}
-
-//for poster
-//void testApp::drawImageTiles(){
-//
-//    row = 12;
-//    col = 9;
-//    gridWidth = ofGetWidth()*.6 / col;
-//    gridHeight = ofGetHeight() / row;
-//
-//
-//    for (int i = 0; i < row; i++) {
-//        for (int j = 0; j < col; j++) {
-//            index = j + i * col;
-//            ofPushStyle();
-//            ofSetColor(255, 255, 255, 75);
-//            tile = mOriginalImages[index];
-//            tile.draw(j*gridWidth, i*gridHeight, gridWidth, gridHeight);
-//            //            cout << index << " -- (" << i << "," << j << ")  -- " << gridWidth << "," << gridHeight << endl;
-//            ofPopStyle();
-//        }
-//    }
-//}
